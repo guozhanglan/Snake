@@ -1,0 +1,8 @@
+{
+	"desc":"唯一ID,名字,皮肤合集ID,",
+	"items":[
+		{"id":10101,"data":"小绿,tou1,tail1,body1"},
+		{"id":10505,"data":"呼噜噜,tou2,tail2,body2"},
+		{"id":11402,"data":"蓝瘦香菇,tou3,tail3,body3"}
+	]
+}

@@ -1,0 +1,132 @@
+{
+	"groups": [
+		{
+			"keys": "description_json,attack_fnt,attack2_png,debate_fnt,debate_png,gold_num_fnt,gold_num_png,recovery_fnt,recovery_png,vip_font_fnt,vip_font_png,gameEui_json,login_res_json,scenebg1_jpg,cfg_ai_json,cfg_i18_json,cfg_RandomName_json,cfg_Skins_json",
+			"name": "preload"
+		},
+		{
+			"keys": "common_res_json",
+			"name": "game"
+		}
+	],
+	"resources": [
+		{
+			"url": "config/description.json",
+			"type": "json",
+			"name": "description_json"
+		},
+		{
+			"url": "res/common/common_res.json",
+			"type": "sheet",
+			"name": "common_res_json",
+			"subkeys": "ui_commom_button,ui_commom_button2,ui_commom_button3,ui_commom_button4,ui_commom_choose,ui_commom_close,ui_commom_di3,ui_commom_di4,ui_commom_green,ui_commom_heart,ui_commom_off,ui_commom_red,ui_commom_table1,ui_commom_table2,ui_commom_table3,ui_main_1,ui_main_2,ui_main_2cry,ui_main_2smile,ui_main_2soon,ui_main_3,ui_main_4soon,ui_main_a,ui_main_add,ui_main_baobiao,ui_main_chaichu,ui_main_daikuan,ui_main_haopin,ui_main_jiantou,ui_main_jianzao,ui_main_maidi,ui_main_money,ui_main_name_bg,ui_main_people,ui_main_play,ui_main_qipao,ui_main_save,ui_main_soon,ui_main_star,ui_main_star2,ui_main_stop,ui_main_time,ui_main_xuxian,ui_main_zhaopin,ui_pop_cat,ui_pop_cat2,ui_pop_cat3,ui_pop_cat4,ui_pop_cat5,ui_pop_chuang,ui_pop_chuang1,ui_pop_fenge"
+		},
+		{
+			"url": "res/font/attack.fnt",
+			"type": "font",
+			"name": "attack_fnt"
+		},
+		{
+			"url": "res/font/attack.png",
+			"type": "image",
+			"name": "attack2_png"
+		},
+		{
+			"url": "res/font/debate.fnt",
+			"type": "font",
+			"name": "debate_fnt"
+		},
+		{
+			"url": "res/font/debate.png",
+			"type": "image",
+			"name": "debate_png"
+		},
+		{
+			"url": "res/font/gold_num.fnt",
+			"type": "font",
+			"name": "gold_num_fnt"
+		},
+		{
+			"url": "res/font/gold_num.png",
+			"type": "image",
+			"name": "gold_num_png"
+		},
+		{
+			"url": "res/font/recovery.fnt",
+			"type": "font",
+			"name": "recovery_fnt"
+		},
+		{
+			"url": "res/font/recovery.png",
+			"type": "image",
+			"name": "recovery_png"
+		},
+		{
+			"url": "res/font/vip_font.fnt",
+			"type": "font",
+			"name": "vip_font_fnt"
+		},
+		{
+			"url": "res/font/vip_font.png",
+			"type": "image",
+			"name": "vip_font_png"
+		},
+		{
+			"url": "gameEui.json",
+			"type": "json",
+			"name": "gameEui_json"
+		},
+		{
+			"url": "res/login/ui_login_bg.jpg",
+			"type": "image",
+			"name": "ui_login_bg_jpg"
+		},
+		{
+			"url": "res/login/login_res.json",
+			"type": "sheet",
+			"name": "login_res_json",
+			"subkeys": "ui_login_1,ui_login_2,ui_login_3,ui_login_4,ui_login_logo"
+		},
+		{
+			"url": "res/icons/bg/scenebg1.jpg",
+			"type": "image",
+			"name": "scenebg1_jpg"
+		},
+		{
+			"url": "config/cfg_ai.json",
+			"type": "json",
+			"name": "cfg_ai_json"
+		},
+		{
+			"url": "config/cfg_i18.json",
+			"type": "json",
+			"name": "cfg_i18_json"
+		},
+		{
+			"url": "config/cfg_RandomName.json",
+			"type": "json",
+			"name": "cfg_RandomName_json"
+		},
+		{
+			"url": "config/cfg_Skins.json",
+			"type": "json",
+			"name": "cfg_Skins_json"
+		},
+		{
+			"url": "res/loginnew/ui_loginnew_bg.jpg",
+			"type": "image",
+			"name": "ui_loginnew_bg_jpg"
+		},
+		{
+			"url": "res/loginnew/loginnew_res.json",
+			"type": "sheet",
+			"name": "loginnew_res_json",
+			"subkeys": "ui_loginnew_1,ui_loginnew_2,ui_loginnew_3,ui_loginnew_4,ui_loginnew_logo"
+		},
+		{
+			"url": "res/mainui/mainUI_bg.jpg",
+			"type": "image",
+			"name": "mainUI_bg_jpg"
+		}
+	]
+}

@@ -1,0 +1,14 @@
+##############################
+## Folders                  ##
+##############################
+bin-debug
+bin-release
+libs
+weixinServer/node_modules
+template
+##############################
+## Netbeans conf            ##
+##############################
+manifest.json
+libs/exml.e.d.ts
+resource/default.thm.json

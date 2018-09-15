@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Snake Candy</title>
+    <style type="text/css">
+        html,
+        body {
+            -ms-touch-action: none;
+            background: #ffffff;
+            padding: 0;
+            border: 0;
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+    <style>
+        .emscripten {
+            padding-right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            display: white;
+        }
+        
+        textarea.emscripten {
+            font-family: monospace;
+            width: 80%;
+        }
+        
+        div.emscripten {
+            text-align: center;
+        }
+        
+        div.emscripten_border {
+            border: 0px solid white;
+        }
+        /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+        
+        canvas.emscripten {
+            border: 0px none;
+            background-color: white;
+        }
+        
+        .spinner {
+            height: 50px;
+            width: 50px;
+            margin: 0px auto;
+            -webkit-animation: rotation .8s linear infinite;
+            -moz-animation: rotation .8s linear infinite;
+            -o-animation: rotation .8s linear infinite;
+            animation: rotation 0.8s linear infinite;
+            border-left: 10px solid rgb(0, 150, 240);
+            border-right: 10px solid rgb(0, 150, 240);
+            border-bottom: 10px solid rgb(0, 150, 240);
+            border-top: 10px solid rgb(100, 0, 200);
+            border-radius: 100%;
+            background-color: rgb(200, 100, 250);
+        }
+        
+        @-webkit-keyframes rotation {
+            from {
+                -webkit-transform: rotate(0deg);
+            }
+            to {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+        
+        @-moz-keyframes rotation {
+            from {
+                -moz-transform: rotate(0deg);
+            }
+            to {
+                -moz-transform: rotate(360deg);
+            }
+        }
+        
+        @-o-keyframes rotation {
+            from {
+                -o-transform: rotate(0deg);
+            }
+            to {
+                -o-transform: rotate(360deg);
+            }
+        }
+        
+        @keyframes rotation {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <script src="https://connect.facebook.net/en_US/fbinstant.6.2.js"></script>
+    <!--<script type="text/javascript" src="a.js"></script>-->
+    <script type="text/javascript">
+        var FbProxy = {
+            // private property
+            _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+            // public method for encoding
+            base64Encode: function(input) {
+                var output = "";
+                var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+                var i = 0;
+                input = FbProxy._utf8_encode(input);
+                while (i < input.length) {
+                    chr1 = input.charCodeAt(i++);
+                    chr2 = input.charCodeAt(i++);
+                    chr3 = input.charCodeAt(i++);
+                    enc1 = chr1 >> 2;
+                    enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+                    enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+                    enc4 = chr3 & 63;
+                    if (isNaN(chr2)) {
+                        enc3 = enc4 = 64;
+                    } else if (isNaN(chr3)) {
+                        enc4 = 64;
+                    }
+                    output = output + this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) + this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+                }
+                return output;
+            },
+            // private method for UTF-8 encoding
+            _utf8_encode: function(string) {
+                string = string.replace(/\r\n/g, "\n");
+                var utftext = "";
+                for (var n = 0; n < string.length; n++) {
+                    var c = string.charCodeAt(n);
+                    if (c < 128) {
+                        utftext += String.fromCharCode(c);
+                    } else if ((c > 127) && (c < 2048)) {
+                        utftext += String.fromCharCode((c >> 6) | 192);
+                        utftext += String.fromCharCode((c & 63) | 128);
+                    } else {
+                        utftext += String.fromCharCode((c >> 12) | 224);
+                        utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+                        utftext += String.fromCharCode((c & 63) | 128);
+                    }
+                }
+                return utftext;
+            },
+            getImgBase64: function(path, callback) {
+                var img = new Image();
+                //img.crossOrigin = "*"; // 支持跨域图片
+                img.src = path;
+                img.onerror = function() {
+                    if (callback) {
+                        callback("");
+                    }
+                };
+                //图片加载完成后触发
+                img.onload = function() {
+                    var canvas = document.createElement("canvas");
+                    //获取绘画上下文
+                    ctx = canvas.getContext("2d");
+
+                    // 获取图片宽高
+                    var imgWidth = img.width;
+                    var imgHeight = img.height;
+
+                    //设置画布宽高与图片宽高相同
+                    canvas.width = imgWidth;
+                    canvas.height = imgHeight;
+
+                    //绘制图片
+                    ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
+                    //图片展示的 data URI
+                    var dataUrl = canvas.toDataURL('image/jpeg');
+                    callback ? callback(dataUrl) : '';
+                };
+            },
+            JsFbGetFriendGame: function(id) {
+                FBInstant.context.chooseAsync().then(function() {
+                    _FBIntCallback(id, 1);
+                }).catch(function(e) {
+                    _FBIntCallback(id, 0);
+                });
+            },
+            JsIsShowVideoAd: function() {
+                var supportedAPIs = FBInstant.getSupportedAPIs();
+                if (supportedAPIs.includes('getRewardedVideoAsync')) {
+                    return 1;
+                }
+                return 0;
+            },
+            JsFbPaymentConsumePurchase: function(id, purchaseToken) {
+                console.log("consumePurchaseAsync purchaseToken:", purchaseToken);
+                FBInstant.payments.consumePurchaseAsync(purchaseToken).then(function() {
+                    console.log("consumePurchaseAsync ok");
+                    _FBIntCallback(id, 1);
+                }).catch(function(e) {
+                    console.log(e);
+                    _FBIntCallback(id, 0);
+                });
+            },
+            JsShowCursor: function(value) {
+                var emscriptenDiv = document.getElementById('emscripten_div');
+                if (value == 1) {
+                    emscriptenDiv.style.cursor = "default";
+                } else {
+                    emscriptenDiv.style.cursor = "url(assets/sprites/scene/cursor.ico),url(assets/sprites/scene/cursor.png),default";
+                }
+                console.log("JsShowCursor:", value);
+            },
+            JsFbShare: function(id, iconStr, descStr) {
+                console.log("Share start :", id, iconStr, descStr);
+                console.log("shareAsync send to c!id=" + id);
+
+                if (iconStr && iconStr != "") {
+                    //share.jpg
+                    FbProxy.getImgBase64("share.jpg", function(iconData) {
+                        if (iconData == "") {
+                            _FBIntCallback(id, 0);
+                            return;
+                        }
+                        FBInstant.shareAsync({
+                            intent: 'SHARE',
+                            image: iconData,
+                            text: descStr,
+                            data: {}
+                        }).then(function() {
+                            console.log("shareAsync send to c!id=" + id);
+                            _FBIntCallback(id, 1);
+                        }).catch(function(err) {
+                            console.log("shareAsync err=" + err);
+                            _FBIntCallback(id, 0);
+                        });
+                    });
+                } else {
+                    _FBIntCallback(id, 0);
+                }
+            },
+            //获取好友列表
+            JsFbGetFriendPlayers: function(id) {
+                FBInstant.player.getConnectedPlayersAsync()
+                    .then(function(players) {
+                        var playerArr = players.map(function(player) {
+                            return player.getID();
+                        });
+                        var rankStr = playerArr.join(",");
+                        console.log("playersStr:", rankStr);
+                        _FBStringCallback(id, FbProxy._JsToCStr(rankStr));
+                    });
+            },
+            JsFbSetLeaderboardScore: function(leaderboardName, score) {
+                FBInstant.getLeaderboardAsync(leaderboardName)
+                    .then(function(leaderboard) {
+                        return leaderboard.setScoreAsync(score);
+                    })
+                    .then(function(entry) {
+                        console.log("setCore:", entry.getRank(), entry.getScore());
+                    });
+            },
+            //获取总排行榜
+            JsFbLeaderboardEntrys:function(id, leaderboardName, start, count) {
+            FBInstant.getLeaderboardAsync(leaderboardName)
+                .then(function(leaderboard) {
+                    return leaderboard.getEntriesAsync(count, start);
+                })
+                .then(function(entries) {
+                    var playerArr = entries.map(function(entry) {
+                        return entry.getPlayer().getID();
+                    });
+                    var rankStr = playerArr.join(",");
+                    console.log("rankStr:", rankStr);
+                    _FBStringCallback(id, JsToCStr(rankStr));
+                });
+            },
+            //获取好友排行榜
+            JsFbLeaderboardConnectedPlayerEntrys:function(id, leaderboardName, start, count) {
+            FBInstant.getLeaderboardAsync(leaderboardName)
+                .then(function(leaderboard) {
+                    //leaderboard.getConnectedPlayerEntriesAsync(5, 3);
+                    //console.log(entries.length); // 5
+                    //console.log(entries[0].getRank()); // 4
+                    //console.log(entries[0].getScore()); // 34
+                    //console.log(entries[1].getRank()); // 5
+                    //console.log(entries[1].getScore()); // 31
+                    return leaderboard.getConnectedPlayerEntriesAsync(count, start);
+                })
+                .then(function(entries) {
+                    var length = entries.length;
+                    var playerArr = new Array(length)
+                    for (var i = 0 ; i < length; i++){
+                        var entry = entries[i];
+                        var player = entry.getPlayer();
+                        playerArr[i] = {
+                            id:player.getID().toString(),
+                            name:player.getName(),
+                            photo:player.getPhoto(),
+                            rank:entry.getRank(),
+                            score:entry.getScore()
+                        };
+                    }
+                    var rankObj = {data:playerArr};
+                    var rankStr = JSON.stringify(rankObj);
+                    console.log("playerArr:", playerArr);
+                    _FBStringCallback(id, FbProxy._JsToCStr(rankStr));
+                })
+                .catch(function(e) {
+                    _FBStringCallback(id, JsToCStr("null"));
+                });
+            },
+            //获取排行榜总数
+             JsFbLeaderboardEntryCount:function(id, leaderboardName) {
+                FBInstant.getLeaderboardAsync(leaderboardName).then(function(leaderboard) {
+                    return leaderboard.getEntryCountAsync();
+                }).then(function(count) {
+                    _FBIntCallback(id, count);
+                });
+            },
+            //myself of rank
+            JsFbLeaderboardEntry:function(id, leaderboardName) {
+                FBInstant.getLeaderboardAsync(leaderboardName)
+                    .then(function(leaderboard) {
+                        return leaderboard.getPlayerEntryAsync();
+                    })
+                    .then(function(entry) {
+                        var rank = entry ? entry.getRank() : 0;
+                        _FBIntCallback(id, rank);
+                    });
+            },
+            JsFbPaymentStart: function(id, productID, order) {
+                console.log("JsFbPaymentStart :", productID);
+                FBInstant.payments.onReady(function() {
+                    console.log('Payments Ready!');
+                    FBInstant.payments.purchaseAsync({
+                        productID: productID + "",
+                        developerPayload: order + ""
+                    }).then(function(purchase) {
+                        console.log(purchase);
+                        //developerPayload字符串？ 开发者指定的字符串， 在商品购买期间提供
+                        //paymentID字符串 购买交易的标识
+                        //productID字符串 商品在游戏中的特定标识
+                        //purchaseTime字符串 购买发生时的 Unix 时间戳
+                        //purchaseToken字符串 代表该笔购买的一个口令， 可用来消费购买的商品
+                        //signedRequestSignedPurchaseRequest 购买请求的服务器 签名代码
+                        var purchaseStr = JSON.stringify(purchase);
+                        var cBaseStr = FbProxy.base64Encode(purchaseStr);
+                        var cStr = FbProxy._JsToCStr(cBaseStr);
+                        console.log("purchaseStr:", cBaseStr, cStr);
+                        _FBPayTokenCallback(cStr);
+                        //JsFbPaymentConsumePurchase(purchase.purchaseToken);
+                        // {productID: '12345', purchaseToken: '54321', developerPayload: 'foobar', ...}
+                    }).catch(function(e) {
+                        console.log(e);
+                        _FBIntCallback(id, 1);
+                    });
+                });
+            },
+
+            JsFbPaymentCheck: function() {
+                console.log("JsFbPaymentCheck starting");
+                FBInstant.payments.getPurchasesAsync().then(function(purchases) {
+                    console.log(purchases); // [{productID: '12345', ...}, ...]
+                    for (var i = 0; i < purchases.length; i++) {
+                        var purchase = purchases[i];
+                        //JsFbPaymentConsumePurchase(purchases[i].purchaseToken);
+                        var purchaseStr = JSON.stringify(purchase);
+                        console.log("purchaseStr:", purchaseStr);
+                        var cBaseStr = FbProxy.base64Encode(purchaseStr);
+                        var cStr = FbProxy._JsToCStr(cBaseStr);
+                        console.log("purchaseStr:", cBaseStr, cStr);
+                        _FBPayTokenCallback(cStr);
+                    }
+                });
+            },
+            JsShowRewardVideoAd: function(id, type) {
+                var preloadedRewardedVideo;
+                var adPlacementID;
+                if (type == 0 || type == 2) {
+                    adPlacementID = '171426837027353_180930742743629'; //宝箱
+                } else if (type == 1 || type == 3) {
+                    adPlacementID = '171426837027353_185913755578661'; //扭蛋
+                }
+                FBInstant.getRewardedVideoAsync(adPlacementID).then(function(rewarded) {
+                    // Load the Ad asynchronously
+                    preloadedRewardedVideo = rewarded;
+                    return preloadedRewardedVideo.loadAsync();
+                }).then(function() {
+                    return preloadedRewardedVideo.showAsync();
+                }).then(function() {
+                    _FBIntCallback(id, 1);
+                }).catch(function(err) {
+                    console.log("RewardedVideo err:", err);
+                    _FBIntCallback(id, 0);
+                });
+            },
+            CreateShortcut: function() {
+                FBInstant.canCreateShortcutAsync().then(function(canCreateShortcut) {
+                    console.log("Shortcut canCreateShortcut:", canCreateShortcut);
+                    if (canCreateShortcut) {
+                        FBInstant.createShortcutAsync()
+                            .then(function() {
+                                console.log("Shortcut created");
+                            })
+                            .catch(function() {
+                                console.log("Shortcut not created");
+                            });
+                    }
+                });
+            },
+            ShowDebugConsole: function() {
+                //不提前加载
+                var eruadScript = document.createElement('script');
+                eruadScript.src="a.js"; 
+                document.body.appendChild(eruadScript); 
+                eruadScript.onload = function () {
+                     window["eruda"].init();
+                     window["eruda"].position({
+                        x: 100,
+                        y: 100
+                     });
+                     window["eruda"].position();
+                 }
+                /*if (window["eruda"]) {
+                    window["eruda"].init();
+                    window["eruda"].position({
+                        x: 100,
+                        y: 100
+                    });
+                    window["eruda"].position();
+                }*/
+            },
+            FindFastPing: function(id, type, address) {
+                var isFind = false;
+                var pingCallback = function(ipAddress, areaID, time) {
+                    if (isFind == false) {
+                        isFind = true;
+                        console.log("ping fast time:", time, ipAddress, areaID);
+                        _FBIntCallback(id, type == 1 ? areaID : time);
+                    }
+                }
+                console.log("FindFastPing:", address);
+                var addressArr = address.split(",");
+                addressArr.map(function(ip) {
+                    if (ip != "") {
+                        var ipArr = ip.split(":");
+                        FbProxy._Ping(ipArr[0], Number(ipArr[1]), pingCallback);
+                    }
+                });
+            },
+            _Ping: function(ipAddress, areaID, callback) {
+                var requestTime;
+                var pXHR = new XMLHttpRequest();
+                pXHR.open('GET', "https://" + ipAddress, true);
+                pXHR.onreadystatechange = function() {
+                    if (pXHR.readyState == 4) {
+                        var responseTime = (new Date()).getTime();
+                        callback(ipAddress, areaID, responseTime - requestTime);
+                    }
+                }
+                requestTime = (new Date()).getTime();
+                pXHR.send(null);
+            },
+            _JsToCStr: function(str) {
+                return allocate(intArrayFromString(str), 'i8', ALLOC_NORMAL);
+            }
+        }
+    </script>
+</head>
+
+<body style="overflow:hidden; margin: 0 0 0 0">
+    <div id="emscripten_div" class="emscripten_border" style="display: none;">
+        <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" style="transform-origin: 0px 0px 0px;"></canvas>
+        <canvas class="emscripten2d" id="canvas2d" style="display: none;" oncontextmenu="event.preventDefault()"></canvas>
+    </div>
+    <script type='text/javascript'>
+        var platform = null;
+        var runDependKey = "slitherDepend";
+        var loadedJs = false;
+        var loadedMem = false;
+        var loadedResource = false;
+        var isDebug = false;
+
+        function ModulePreRunFunc() {
+            addRunDependency(runDependKey);
+        }
+        var Module = {
+            preRun: [ModulePreRunFunc],
+            postRun: [],
+            charInfoMap: {},
+            print: (function() {
+                return function(text) {
+                    if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+                    console.log(text);
+                };
+            })(),
+            printErr: function(text) {},
+            canvas: (function() {
+                var canvas = document.getElementById('canvas');
+
+                // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+                // application robust, you may want to override this behavior before shipping!
+                // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+                canvas.addEventListener("webglcontextlost", function(e) {
+                    alert('WebGL context lost. You will need to reload the page.');
+                    e.preventDefault();
+                }, false);
+
+                return canvas;
+            })(),
+            ctx2d: (function() {
+                var canvas2d = document.getElementById('canvas2d').getContext('2d');
+                return canvas2d;
+
+            })(),
+            setStatus: function(text) {},
+            totalDependencies: 0,
+            monitorRunDependencies: function(left) {
+                this.totalDependencies = Math.max(this.totalDependencies, left);
+                Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+            }
+        };
+        Module.setStatus('Downloading...');
+        window.onerror = function() {
+            Module.setStatus('Exception thrown, see JavaScript console');
+            //spinnerElement.style.display = 'none';
+            Module.setStatus = function(text) {
+                if (text) Module.printErr('[post-exception status] ' + text);
+            };
+        };
+
+        window.onresize = function() {
+            var emscriptenDiv = document.getElementById('emscripten_div');
+            var canvas = document.getElementById('canvas');
+
+            emscriptenDiv.style.display = "block";
+            console.log("emscripten_border style.display = block");
+            //ShowDebugConsole();
+            var clientWidth = document.documentElement.clientWidth;
+            var clientHeight = document.documentElement.clientHeight;
+            var devicePixelRatio = window.hasOwnProperty("devicePixelRatio") ? window["devicePixelRatio"] : 1;
+            console.log("devicePixelRatio:", devicePixelRatio);
+            canvas.width = Math.round(clientWidth * devicePixelRatio);
+            canvas.height = Math.round(clientHeight * devicePixelRatio);
+            canvas.style.width = clientWidth + "px";
+            canvas.style.height = clientHeight + "px";
+
+            if (clientHeight > clientWidth) {
+                Module.canvasFlip = 1;
+                Module.setCanvasSize(clientHeight * devicePixelRatio, clientWidth * devicePixelRatio);
+                canvas.style.transform = "matrix(0, 1, -1, 0, " + (clientHeight * devicePixelRatio + 1) + ", 0)";
+            } else {
+                Module.canvasFlip = 0;
+                Module.setCanvasSize(clientWidth * devicePixelRatio, clientHeight * devicePixelRatio);
+                canvas.style.transform = "matrix(1, 0, 0, 1, 0, 0)";
+            }
+            Module.mousePosScale = devicePixelRatio;
+            canvas.width = Math.round(clientWidth * devicePixelRatio);
+            canvas.height = Math.round(clientHeight * devicePixelRatio);
+            canvas.style.width = clientWidth + "px";
+            canvas.style.height = clientHeight + "px";
+        };
+
+        function StartGame() {
+            removeRunDependency(runDependKey);
+            console.log("Enter game......");
+        }
+
+        function StartFackbookSdk() {
+            console.log("fackbook startGameAsync");
+            FBInstant.startGameAsync()
+                .then(function() {
+                    var contextType = FBInstant.context.getType();
+                    var playerName = FBInstant.player.getName();
+                    var playerPic = FBInstant.player.getPhoto();
+                    var playerId = FBInstant.player.getID();
+                    var platform = FBInstant.getPlatform(); // 'IOS'
+                    var contextId = FBInstant.context.getID();
+
+                    platform = FBInstant.getPlatform(); // 'IOS'
+                    console.log("FB playerId:", playerId);
+                    FBInstant.player.getSignedPlayerInfoAsync('my_payload').then(function(result) {
+                        document.Fb_userInfo = {
+                            "contextId": contextId,
+                            "contextType": contextType,
+                            "playerName": playerName,
+                            "playerPic": FbProxy.base64Encode(playerPic),
+                            "playerId": playerId,
+                            "signature": result.getSignature(),
+                            "platform": platform
+                        };
+
+                        //console.log("Fb_userInfo:", document.Fb_userInfo);
+
+                        StartGame();
+                    });
+                    document.fbsdk = {
+                        "version": "1.0.2",
+                        "Base64Encode": FbProxy.base64Encode,
+                        "getImgBase64": FbProxy.getImgBase64,
+                        "JsIsShowVideoAd": FbProxy.JsIsShowVideoAd,
+                        "JsFbPaymentConsumePurchase": FbProxy.JsFbPaymentConsumePurchase,
+                        "JsShowCursor": FbProxy.JsShowCursor,
+                        "JsFbShare": FbProxy.JsFbShare,
+                        "JsFbPaymentStart": FbProxy.JsFbPaymentStart,
+                        "JsFbPaymentCheck": FbProxy.JsFbPaymentCheck,
+                        "JsShowRewardVideoAd": FbProxy.JsShowRewardVideoAd,
+                        "ShowDebugConsole": FbProxy.ShowDebugConsole,
+                        "JsFindFastPing": FbProxy.FindFastPing,
+                        "JsFbGetFriendGame": FbProxy.JsFbGetFriendGame,
+                        "JsFbGetFriendPlayers": FbProxy.JsFbGetFriendPlayers,
+                        "JsFbLeaderboardEntrys": FbProxy.JsFbLeaderboardEntrys,
+                        "JsFbLeaderboardPlayerEntrys": FbProxy.JsFbLeaderboardConnectedPlayerEntrys,
+                        "JsFbLeaderboardEntry": FbProxy.JsFbLeaderboardEntry,
+                        "JsFbLeaderboardEntryCount": FbProxy.JsFbLeaderboardEntryCount,
+                        "JsFbSetLeaderboardScore": FbProxy.JsFbSetLeaderboardScore
+                    };
+                    //Screen Shortcut API for android
+                    FbProxy.CreateShortcut();
+                    //console.log("document.fbsdk:", document.fbsdk);
+                });
+        }
+        console.log("fackbook sdk");
+
+        function StartLoadResources() {
+            var images = [
+                'assets/icons/Loading/loading_background.jpg',
+                'assets/icons/Loading/jindutiaodi.png',
+                'assets/icons/Loading/jindutiao.png'
+            ];
+            //load resource
+            var currentLoad = 0;
+            var totalLoad = images.length;
+            for (var i = 0; i < images.length; i++) {
+                var assetName = images[i];
+                var img = document.createElement("img");
+                img.src = assetName;
+                img.onload = function() {
+                    currentLoad++;
+                    var progress = (currentLoad / totalLoad) * 90;
+                    FBInstant.setLoadingProgress(progress);
+                    if (currentLoad == totalLoad) {
+                        loadedResource = true;
+                        console.log("Reource load complete");
+                        if (loadedResource && loadedMem && loadedJs) {
+                            StartFackbookSdk();
+                        }
+                    }
+                }
+            }
+        }
+
+        function StartLoaderMem() {
+            var memoryInitializer = 'SlitherDemo.html.mem';
+            if (typeof Module['locateFile'] === 'function') {
+                memoryInitializer = Module['locateFile'](memoryInitializer);
+            } else if (Module['memoryInitializerPrefixURL']) {
+                memoryInitializer = Module['memoryInitializerPrefixURL'] + memoryInitializer;
+            }
+            Module['memoryInitializerRequestURL'] = memoryInitializer;
+            var meminitXHR = Module['memoryInitializerRequest'] = new XMLHttpRequest();
+            meminitXHR.open('GET', memoryInitializer, true);
+            meminitXHR.responseType = 'arraybuffer';
+            meminitXHR.onreadystatechange = function() {
+                if (meminitXHR.readyState == 4 && meminitXHR.status == 200) {
+                    console.log("SlitherDemo.html.mem complete......");
+                    loadedMem = true;
+                    if (loadedResource && loadedMem && loadedJs) {
+                        StartFackbookSdk();
+                    }
+                }
+            }
+            meminitXHR.send(null);
+        }
+
+        function StartLoaderJs() {
+            var script = document.createElement('script');
+            script.src = "SlitherDemo.js";
+            script.onload = function() {
+                loadedJs = true;
+                console.log("SlitherDemo load complete");
+                if (loadedResource && loadedMem && loadedJs) {
+                    StartFackbookSdk();
+                }
+            }
+            document.body.appendChild(script);
+        }
+        //fackbook sdk
+        FBInstant.initializeAsync().then(function() {
+            FBInstant.setLoadingProgress(10);
+            StartLoadResources();
+            StartLoaderJs();
+            StartLoaderMem();
+        });
+        //FbProxy.ShowDebugConsole();
+    </script>
+
+</body>
+
+</html>

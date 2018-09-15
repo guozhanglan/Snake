@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="LoginSkin" width="960" height="640" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing">
+	<e:Image source="ui_login_bg_jpg" left="0" right="0" top="0" bottom="0"/>
+
+	<e:Button id="btnEnter" label="" horizontalCenter="0.5" top="335">
+		<e:skinName>
+			<e:Skin states="up,down,disabled">
+			<e:Image width="100%" height="100%" source="login_res_json.ui_login_1" source.down="login_res_json.ui_login_2"/>
+			<e:Label id="labelDisplay" horizontalCenter="0" verticalCenter="0"/>
+			</e:Skin>
+		</e:skinName>
+	</e:Button>
+	<e:Group width="700" height="151" y="472" anchorOffsetX="0" anchorOffsetY="0" horizontalCenter="0">
+		<e:CheckBox id="check" label="" x="38" y="13" selected="true">
+			<e:skinName>
+				<e:Skin states="up,down,disabled">
+				<e:Image width="100%" height="100%" source="login_res_json.ui_login_4" source.down="login_res_json.ui_login_3"/>
+				<e:Label id="labelDisplay" horizontalCenter="0" verticalCenter="0"/>
+				</e:Skin>
+			</e:skinName>
+		</e:CheckBox>
+		<e:Label id="txtDesc" text="我已阅读并同意腾讯游戏用户协议和隐私策略" x="87" y="21" anchorOffsetX="0" width="608" anchorOffsetY="0" height="44" verticalAlign="middle" size="28"/>
+		<e:Label id="txtTips" text="适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。\n抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防上当受骗。" x="40" y="75.5" anchorOffsetX="0" width="645" anchorOffsetY="0" height="58" size="23" textColor="0x6229f2"/>
+	</e:Group>
+</e:Skin>

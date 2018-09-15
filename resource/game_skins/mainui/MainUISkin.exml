@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="MainUISkin" width="960" height="640" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" xmlns:wqq="wqq.*">
+	<w:Config id="164e1a783e7"/>
+	<e:Image source="mainUI_bg_jpg" fillMode="scale" top="0" bottom="0" height="640" anchorOffsetY="0" right="0" left="0"/>
+	<e:Label text="Label" x="268" y="452"/>
+
+</e:Skin>
